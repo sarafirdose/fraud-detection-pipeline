@@ -1,0 +1,175 @@
+version: '3.8'
+
+services:
+  # 1. Apache Kafka Message Broker & Zookeeper
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: fraud-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - fraud-net
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: fraud-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    networks:
+      - fraud-net
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "9092"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 2. MongoDB Database
+  mongodb:
+    image: mongo:6.0
+    container_name: fraud-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: fraud_detection
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - fraud-net
+
+  # 3. Optional Apache Cassandra NoSQL Database
+  cassandra:
+    image: cassandra:4.1
+    container_name: fraud-cassandra
+    ports:
+      - "9042:9042"
+    environment:
+      - CASSANDRA_CLUSTER_NAME=FraudCluster
+      - CASSANDRA_DC=datacenter1
+    volumes:
+      - cassandra_data:/var/lib/cassandra
+    networks:
+      - fraud-net
+
+  # 4. FastAPI Backend
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: fraud-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - MONGO_URI=mongodb://mongodb:27017
+      - MONGO_DB_NAME=fraud_detection
+      - CASSANDRA_HOSTS=cassandra
+      - CASSANDRA_PORT=9042
+      - ENABLE_CASSANDRA=false
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+    depends_on:
+      - kafka
+      - mongodb
+    networks:
+      - fraud-net
+
+  # 5. Stream Processor (Unified ML & Behavioral Engine)
+  processor:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.processor
+    container_name: fraud-stream-processor
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - MONGO_URI=mongodb://mongodb:27017
+      - MONGO_DB_NAME=fraud_detection
+      - CASSANDRA_HOSTS=cassandra
+      - CASSANDRA_PORT=9042
+      - ENABLE_CASSANDRA=false
+    depends_on:
+      - kafka
+      - mongodb
+      - backend
+    networks:
+      - fraud-net
+
+  # 6. Kafka Transaction Producer
+  producer:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.producer
+    container_name: fraud-producer
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - TRANSACTION_RATE=5.0
+    depends_on:
+      - kafka
+      - processor
+    networks:
+      - fraud-net
+
+  # 7. Prometheus Metric Scraper
+  prometheus:
+    image: prom/prometheus:v2.50.0
+    container_name: fraud-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - backend
+    networks:
+      - fraud-net
+
+  # 8. Grafana Real-Time SOC & Telemetry Dashboard
+  grafana:
+    image: grafana/grafana:10.3.0
+    container_name: fraud-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/fraud_detection_dashboard.json:/etc/grafana/provisioning/dashboards/fraud_detection_dashboard.json:ro
+    depends_on:
+      - prometheus
+    networks:
+      - fraud-net
+
+  # 9. React Frontend Dashboard
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../docker/Dockerfile.frontend
+    container_name: fraud-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - fraud-net
+
+volumes:
+  mongo_data:
+  cassandra_data:
+
+networks:
+  fraud-net:
+    driver: bridge
