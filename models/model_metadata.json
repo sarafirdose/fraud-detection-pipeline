@@ -1,0 +1,122 @@
+{
+  "model_name": "XGBoost Classifier",
+  "trained_at": "2026-09-02T18:16:20.297291Z",
+  "dataset_source": "PaySim-compatible synthetic demo data",
+  "dataset_path": "data/sample_transactions.csv",
+  "train_samples": 22500,
+  "test_samples": 7500,
+  "fraud_count_total": 450,
+  "fraud_rate_pct": 1.5,
+  "metrics": {
+    "precision": 1.0,
+    "recall": 0.9911,
+    "f1_score": 0.9955,
+    "roc_auc": 1.0,
+    "pr_auc": 1.0,
+    "confusion_matrix": {
+      "true_negative": 7388,
+      "false_positive": 0,
+      "false_negative": 1,
+      "true_positive": 111
+    }
+  },
+  "feature_columns": [
+    "amount",
+    "log_amount",
+    "oldbalanceOrg",
+    "newbalanceOrig",
+    "oldbalanceDest",
+    "newbalanceDest",
+    "errorBalanceOrig",
+    "errorBalanceDest",
+    "origBalanceDrainRatio",
+    "destBalanceChangeRatio",
+    "is_merchant_dest",
+    "is_transfer_or_cashout",
+    "hour_of_day",
+    "type_CASH_IN",
+    "type_CASH_OUT",
+    "type_DEBIT",
+    "type_PAYMENT",
+    "type_TRANSFER"
+  ],
+  "feature_importances": [
+    {
+      "feature": "amount",
+      "importance": 0.9433
+    },
+    {
+      "feature": "newbalanceOrig",
+      "importance": 0.0562
+    },
+    {
+      "feature": "oldbalanceOrg",
+      "importance": 0.0002
+    },
+    {
+      "feature": "destBalanceChangeRatio",
+      "importance": 0.0002
+    },
+    {
+      "feature": "oldbalanceDest",
+      "importance": 0.0001
+    },
+    {
+      "feature": "log_amount",
+      "importance": 0.0
+    },
+    {
+      "feature": "newbalanceDest",
+      "importance": 0.0
+    },
+    {
+      "feature": "errorBalanceOrig",
+      "importance": 0.0
+    },
+    {
+      "feature": "errorBalanceDest",
+      "importance": 0.0
+    },
+    {
+      "feature": "origBalanceDrainRatio",
+      "importance": 0.0
+    },
+    {
+      "feature": "is_merchant_dest",
+      "importance": 0.0
+    },
+    {
+      "feature": "is_transfer_or_cashout",
+      "importance": 0.0
+    },
+    {
+      "feature": "hour_of_day",
+      "importance": 0.0
+    },
+    {
+      "feature": "type_CASH_IN",
+      "importance": 0.0
+    },
+    {
+      "feature": "type_CASH_OUT",
+      "importance": 0.0
+    },
+    {
+      "feature": "type_DEBIT",
+      "importance": 0.0
+    },
+    {
+      "feature": "type_PAYMENT",
+      "importance": 0.0
+    },
+    {
+      "feature": "type_TRANSFER",
+      "importance": 0.0
+    }
+  ],
+  "thresholds": {
+    "fraud_score_threshold": 0.5,
+    "high_risk_threshold": 0.7,
+    "critical_risk_threshold": 0.85
+  }
+}
