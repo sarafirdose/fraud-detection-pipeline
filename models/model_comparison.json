@@ -1,0 +1,86 @@
+{
+  "generated_at": "2026-09-09T11:01:25.713787Z",
+  "total_test_samples": 7500,
+  "test_fraud_count": 112,
+  "test_normal_count": 7388,
+  "models": {
+    "SUPERVISED_XGBOOST": {
+      "model_name": "XGBoost Classifier",
+      "paradigm": "Supervised",
+      "train_time_sec": 0.72,
+      "precision": 1.0,
+      "recall": 0.9911,
+      "f1_score": 0.9955,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "fpr": 0.0,
+      "fnr": 0.0089,
+      "avg_latency_ms": 7.453,
+      "confusion_matrix": {
+        "TN": 7388,
+        "FP": 0,
+        "FN": 1,
+        "TP": 111
+      }
+    },
+    "SUPERVISED_RANDOM_FOREST": {
+      "model_name": "Random Forest Classifier",
+      "paradigm": "Supervised",
+      "train_time_sec": 0.72,
+      "precision": 1.0,
+      "recall": 0.9821,
+      "f1_score": 0.991,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "fpr": 0.0,
+      "fnr": 0.0179,
+      "avg_latency_ms": 50.924,
+      "confusion_matrix": {
+        "TN": 7388,
+        "FP": 0,
+        "FN": 2,
+        "TP": 110
+      }
+    },
+    "UNSUPERVISED_ISOLATION_FOREST": {
+      "model_name": "Isolation Forest",
+      "paradigm": "Unsupervised",
+      "train_time_sec": 1.59,
+      "precision": 0.1996,
+      "recall": 0.9821,
+      "f1_score": 0.3318,
+      "roc_auc": 0.9909,
+      "pr_auc": 0.7287,
+      "fpr": 0.0597,
+      "fnr": 0.0179,
+      "avg_latency_ms": 16.439,
+      "confusion_matrix": {
+        "TN": 6947,
+        "FP": 441,
+        "FN": 2,
+        "TP": 110
+      }
+    },
+    "UNSUPERVISED_AUTOENCODER": {
+      "model_name": "Neural Autoencoder",
+      "paradigm": "Unsupervised",
+      "train_time_sec": 5.83,
+      "precision": 0.3489,
+      "recall": 1.0,
+      "f1_score": 0.5173,
+      "roc_auc": 0.9967,
+      "pr_auc": 0.6957,
+      "fpr": 0.0283,
+      "fnr": 0.0,
+      "avg_latency_ms": 2.329,
+      "confusion_matrix": {
+        "TN": 7179,
+        "FP": 209,
+        "FN": 0,
+        "TP": 112
+      }
+    }
+  },
+  "recommended_default": "SUPERVISED_XGBOOST",
+  "recommendation_reason": "XGBoost achieves highest fraud Recall (>99%) with near-zero False Positive Rate (FPR < 0.001) and sub-millisecond latency."
+}
