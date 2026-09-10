@@ -177,7 +177,10 @@ Tests cover:
 
 ---
 
-## Documentation
+## Documentation & Viva Resources
 
-- [System Architecture](docs/architecture.md)
-- [Live Demonstration Guide](docs/demo-guide.md)
+- [Comprehensive Project Review & Viva Guide](PROJECT_REVIEW_DOCUMENTATION.md) — 14-section review documentation with viva Q&A, elevator pitches, and 5-minute demo scripts.
+- [System Architecture](docs/architecture.md) — Architectural diagrams, stateful profiler specs, and Kafka event topology.
+- [Live Demonstration Guide](docs/demo-guide.md) — Step-by-step evaluator presentation guide.
+- [Implementation & Benchmark Report](IMPLEMENTATION_REPORT.md) — 4-model benchmark matrix (XGBoost, Random Forest, Isolation Forest, Autoencoder).
+
