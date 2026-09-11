@@ -96,3 +96,9 @@ npm run dev
    - Explain the Confusion Matrix (Low False Negatives on imbalanced classes).
    - Explain the High Recall (Fraud Sensitivity), ROC-AUC, and PR-AUC.
    - Show the learned Feature Importance rankings (`errorBalanceOrig`, `log_amount`, etc.).
+
+### F. Show In-Page Prometheus & Grafana Telemetry
+1. Click **Prometheus** in the top navbar:
+   - Shows the live in-page parsed metric registry from `GET /metrics` (throughput, latency, error rates).
+2. Click **Grafana** in the top navbar:
+   - Shows the visual SOC telemetry modal with real-time latency area charts and service health indicators.
